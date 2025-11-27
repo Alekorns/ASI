@@ -1,0 +1,10 @@
+[project]
+name = "asi"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.9"
+dependencies = [
+    "notebook>=7.5.0",
+    "pandas>=2.3.3",
+    "scikit-learn>=1.6.1",
+]

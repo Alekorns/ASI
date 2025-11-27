@@ -1,0 +1,8 @@
+Metadata-Version: 2.4
+Name: asi
+Version: 0.1.0
+Summary: Add your description here
+Requires-Python: >=3.9
+Requires-Dist: notebook>=7.5.0
+Requires-Dist: pandas>=2.3.3
+Requires-Dist: scikit-learn>=1.6.1

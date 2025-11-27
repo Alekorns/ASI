@@ -1,0 +1,9 @@
+pyproject.toml
+src/asi.egg-info/PKG-INFO
+src/asi.egg-info/SOURCES.txt
+src/asi.egg-info/dependency_links.txt
+src/asi.egg-info/requires.txt
+src/asi.egg-info/top_level.txt
+src/iris_classifier/__init__.py
+src/iris_classifier/data.py
+src/iris_classifier/model.py
