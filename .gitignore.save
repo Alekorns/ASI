@@ -1,0 +1,70 @@
+# ---------------------
+# Python cache
+# ---------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ---------------------
+# Virtual environments
+# ---------------------
+.venv/
+venv/
+env/
+
+# ---------------------
+# Jupyter
+# ---------------------
+.ipynb_checkpoints/
+*.nb.html
+
+# ---------------------
+# OS junk
+# ---------------------
+.DS_Store
+Thumbs.db
+
+# ---------------------
+# IDEs / editors
+# ---------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---------------------
+# Logs and temp files
+# ---------------------
+*.log
+*.tmp
+
+# ---------------------
+# DVC
+# ---------------------
+.dvc/cache/
+.dvc/tmp/
+data/**
+
+# (Allow .dvc files but not tracked dataset)
+!data/*.dvc
+
+# ---------------------
+# Build artifacts
+# ---------------------
+dist/
+build/
+*.egg-info/
+
+# ---------------------
+# Env/config secrets
+# ---------------------
+.env
+*.env
+
+# ---------------------
+# Python packaging
+# ---------------------
+pip-wheel-metadata/
+
+

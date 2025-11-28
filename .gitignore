@@ -1,0 +1,11 @@
+cat >> .gitignore << 'EOF'
+
+.DS_Store
+
+.venv/
+
+__pycache__/
+*.pyc
+
+src/asi.egg-info/
+EOF

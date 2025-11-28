@@ -1,4 +1,7 @@
 [core]
-    remote = myremote
+    remote = gcsremote
 ['remote "myremote"']
     url = /tmp/dvcstore
+['remote "gcsremote"']
+    url = gs://asitest67
+    credentialpath = /Users/kostiantynromanenko/dvc-gcs.json
