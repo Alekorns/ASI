@@ -1,6 +1,6 @@
 from pathlib import Path
 import joblib
-from iris_classifier.model import IrisClassifier
+from src.iris_classifier.model import IrisClassifier
 
 MODELS_DIR = Path(__file__).resolve().parent.parent.parent / "models"
 MODELS_DIR.mkdir(exist_ok=True)

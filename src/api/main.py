@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from api.routes import predict, train, models
+from src.api.routes import predict, train, models
 
 app = FastAPI(title="Iris API")
 
