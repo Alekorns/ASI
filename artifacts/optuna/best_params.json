@@ -1,0 +1,10 @@
+{
+  "n_layers": 3,
+  "n_units_l0": 202,
+  "n_units_l1": 62,
+  "n_units_l2": 111,
+  "learning_rate_init": 0.038665242308023685,
+  "alpha": 0.0009395580343696518,
+  "activation": "relu",
+  "solver": "adam"
+}

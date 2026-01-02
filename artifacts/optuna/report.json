@@ -1,0 +1,18 @@
+{
+  "best_cv_accuracy": 0.9800000000000001,
+  "best_params": {
+    "n_layers": 3,
+    "n_units_l0": 202,
+    "n_units_l1": 62,
+    "n_units_l2": 111,
+    "learning_rate_init": 0.038665242308023685,
+    "alpha": 0.0009395580343696518,
+    "activation": "relu",
+    "solver": "adam"
+  },
+  "n_trials": 50,
+  "seed": 42,
+  "cv_folds": 5,
+  "storage": "sqlite:///artifacts/optuna/study.db",
+  "model_path": "artifacts/optuna/best_mlp_model.pkl"
+}
