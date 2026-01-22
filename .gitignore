@@ -11,3 +11,5 @@ src/asi.egg-info/
 EOF
 
 .tmp/
+
+.venv/
