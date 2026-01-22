@@ -9,3 +9,5 @@ __pycache__/
 
 src/asi.egg-info/
 EOF
+
+.tmp/
