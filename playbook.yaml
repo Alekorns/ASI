@@ -1,0 +1,140 @@
+---
+- name: Build and deploy Iris API
+  hosts: app
+  become: "{{ ansible_connection != 'local' }}"
+  collections:
+    - community.docker
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    project_root: "{{ playbook_dir }}"
+    image_name: "asi-iris-api"
+    image_tag: "latest"
+    image_tar: "{{ project_root }}/.tmp/asi-iris-api.tar"
+    remote_image_tar: "/tmp/asi-iris-api.tar"
+    container_name: "asi-iris-api"
+    host_port: 8000
+    container_port: 8000
+    models_dir_default: "{{ (ansible_connection == 'local') | ternary(lookup('env','HOME') ~ '/asi-models', '/opt/asi/models') }}"
+    frontend_enabled: false
+    frontend_dir: "{{ project_root }}/frontend"
+    frontend_image_name: "asi-iris-frontend"
+    frontend_image_tag: "latest"
+    frontend_image_tar: "{{ project_root }}/.tmp/asi-iris-frontend.tar"
+    frontend_remote_image_tar: "/tmp/asi-iris-frontend.tar"
+    frontend_container_name: "asi-iris-frontend"
+    frontend_host_port: 8080
+    frontend_container_port: 80
+
+  tasks:
+    - name: Build image locally
+      community.docker.docker_image:
+        name: "{{ image_name }}"
+        tag: "{{ image_tag }}"
+        source: build
+        build:
+          path: "{{ project_root }}"
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+    - name: Ensure local image export directory exists
+      ansible.builtin.file:
+        path: "{{ project_root }}/.tmp"
+        state: directory
+        mode: "0755"
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+    - name: Save image to tar on controller
+      ansible.builtin.command:
+        cmd: "docker save -o {{ image_tar }} {{ image_name }}:{{ image_tag }}"
+      delegate_to: localhost
+      become: false
+      run_once: true
+      changed_when: true
+
+    - name: Copy image tar to remote
+      ansible.builtin.copy:
+        src: "{{ image_tar }}"
+        dest: "{{ remote_image_tar }}"
+        mode: "0644"
+
+    - name: Load image on remote
+      ansible.builtin.command:
+        cmd: "docker load -i {{ remote_image_tar }}"
+      changed_when: true
+
+    - name: Ensure models directory exists on remote
+      ansible.builtin.file:
+        path: "{{ models_dir | default(models_dir_default) }}"
+        state: directory
+        mode: "0755"
+
+    - name: Start Iris API container
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        image: "{{ image_name }}:{{ image_tag }}"
+        state: started
+        recreate: true
+        force_kill: true
+        restart_policy: unless-stopped
+        ports:
+          - "{{ host_port }}:{{ container_port }}"
+        volumes:
+          - "{{ models_dir | default(models_dir_default) }}:/app/models"
+      become: false
+
+    - name: Wait for Iris API to be ready
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ host_port }}/models"
+        status_code: 200
+      register: api_health
+      retries: 10
+      delay: 2
+      until: api_health.status == 200
+
+    - name: Build frontend image locally
+      community.docker.docker_image:
+        name: "{{ frontend_image_name }}"
+        tag: "{{ frontend_image_tag }}"
+        source: build
+        build:
+          path: "{{ frontend_dir }}"
+      delegate_to: localhost
+      become: false
+      run_once: true
+      when: frontend_enabled | bool
+
+    - name: Save frontend image to tar on controller
+      ansible.builtin.command:
+        cmd: "docker save -o {{ frontend_image_tar }} {{ frontend_image_name }}:{{ frontend_image_tag }}"
+      delegate_to: localhost
+      become: false
+      run_once: true
+      changed_when: true
+      when: frontend_enabled | bool
+
+    - name: Copy frontend image tar to remote
+      ansible.builtin.copy:
+        src: "{{ frontend_image_tar }}"
+        dest: "{{ frontend_remote_image_tar }}"
+        mode: "0644"
+      when: frontend_enabled | bool
+
+    - name: Load frontend image on remote
+      ansible.builtin.command:
+        cmd: "docker load -i {{ frontend_remote_image_tar }}"
+      changed_when: true
+      when: frontend_enabled | bool
+
+    - name: Start frontend container
+      community.docker.docker_container:
+        name: "{{ frontend_container_name }}"
+        image: "{{ frontend_image_name }}:{{ frontend_image_tag }}"
+        state: started
+        restart_policy: unless-stopped
+        ports:
+          - "{{ frontend_host_port }}:{{ frontend_container_port }}"
+      become: false
+      when: frontend_enabled | bool
